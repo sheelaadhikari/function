@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+  php-server:
+    build:
+      dockerfile: .Dockerfile
+      context: .
+    restart: always
+    ports:
+      - 8081:80
+    volumes:
+      - "./:/var/www/html"
+
+
+  mariadb:
+    image: mariadb:10.5.2
+    volumes:
+      - mariadb-volume:/var/lib/mysql
+    environment:
+      TZ: "Europe/Rome"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: "rootpwd"
+      MYSQL_USER: 'testuser' # username to login
+      MYSQL_PASSWORD: 'testpassword' # password to login
+      MYSQL_DATABASE: 'mydb'
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - 'mariadb:db'
+    ports:
+      - 8001:80
+
+volumes:
+  mariadb-volume:
